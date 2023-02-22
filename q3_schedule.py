@@ -16,7 +16,7 @@ class LinearSchedule(object):
         self.eps_end = eps_end
         self.nsteps = nsteps
 
-    def update(self, t: int):
+    def update(self, t):
         """
         Updates epsilon
 
@@ -33,7 +33,8 @@ class LinearSchedule(object):
         """
         ##############################################################
         ################ YOUR CODE HERE - 3-6 lines ##################
-
+        ratio = min(1, t / self.nsteps)
+        self.epsilon = self.eps_begin - (self.eps_begin - self.eps_end) * ratio
         ##############################################################
         ######################## END YOUR CODE ############## ########
 
@@ -53,7 +54,7 @@ class LinearExploration(LinearSchedule):
         self.env = env
         super(LinearExploration, self).__init__(eps_begin, eps_end, nsteps)
 
-    def get_action(self, best_action: int) -> int:
+    def get_action(self, best_action):
         """
         Returns a random action with prob epsilon, otherwise returns the best_action
 
@@ -77,7 +78,11 @@ class LinearExploration(LinearSchedule):
         """
         ##############################################################
         ################ YOUR CODE HERE - 4-5 lines ##################
-
+        action_num = self.env.num_actions()
+        if random.random() < self.epsilon:
+            return random.randrange(action_num)
+        else:
+            return best_action
         ##############################################################
         ######################## END YOUR CODE #######################
 
