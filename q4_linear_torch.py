@@ -35,7 +35,9 @@ class Linear(DQN):
 
         ##############################################################
         ################ YOUR CODE HERE (3-4 lines) ##################
-
+        channels = n_channels * self.config.state_history
+        self.q_network = nn.Linear(img_height * img_width * channels, num_actions)
+        self.target_network = nn.Linear(img_height * img_width * channels, num_actions)
         ##############################################################
         ######################## END YOUR CODE #######################
 
@@ -61,7 +63,11 @@ class Linear(DQN):
 
         ##############################################################
         ################ YOUR CODE HERE - 3-5 lines ##################
-
+        flat = torch.flatten(state, start_dim=1)
+        if network == 'q_network':
+            out = self.q_network(flat)
+        else:
+            out = self.target_network(flat)
         ##############################################################
         ######################## END YOUR CODE #######################
 
@@ -84,7 +90,7 @@ class Linear(DQN):
 
         ##############################################################
         ################### YOUR CODE HERE - 1-2 lines ###############
-
+        self.target_network.load_state_dict(self.q_network.state_dict())
         ##############################################################
         ######################## END YOUR CODE #######################
 
@@ -129,7 +135,17 @@ class Linear(DQN):
 
         ##############################################################
         ##################### YOUR CODE HERE - 3-5 lines #############
+        # target
+        updated_target = rewards + gamma * torch.max(target_q_values, dim=1)[0]
+        updated_target = torch.where(done_mask, rewards, updated_target)
 
+        # current q_values
+        actions = F.one_hot(actions.to(torch.int64), num_actions) # shape = (batch_size, num_actions)
+        current_q_values = torch.sum(q_values * actions, dim=1)
+
+        out = F.mse_loss(current_q_values, updated_target)
+
+        return out
         ##############################################################
         ######################## END YOUR CODE #######################
 
@@ -146,7 +162,7 @@ class Linear(DQN):
         """
         ##############################################################
         #################### YOUR CODE HERE - 1 line #############
-
+        self.optimizer = torch.optim.Adam(self.q_network.parameters())
         ##############################################################
         ######################## END YOUR CODE #######################
 
