@@ -1,95 +1,17 @@
-# RL with MinAtar
+# RL with MinAtar - Assignment 2 of cs234 2023
 
-## Install
-Install either Anaconda or Miniconda using instructions below
+## Intorduction
+In this assignment, a modified version of deep Q-learning from DeepMind’s paper is implemented. For the environment setting, the player controls a bar that can move horizontally, and gets rewards by bouncing a ball into bricks, breaking them. We are going to use MinAtar ([7]), a miniaturized version of the original Atari game. Instead of the original 210 × 160 RGB image resolution, MinAtar uses a 10 × 10 boolean grid, which makes it possible to use a significantly smaller model and still get a good performance.
 
-https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html
-
-After installing Conda, follow the following instructions on a terminal:
-```bash
-cd <assignment_dir>
-Create a conda environment using the following:
-
-conda env create -f cs234-torch-<your-system>.yml
-conda activate cs234-torch
-
-pip install -r requirements.txt
-git clone https://github.com/kenjyoung/MinAtar.git
-cd MinAtar
-pip install .
-cd ../
-```
-
-NOTE: If you are using an M1-M2 Mac, you might run into trouble installing a package called
-grpcio. If so, we recommend installing it from this repo:
-https://github.com/pietrodn/grpcio-mac-arm-build/releases.
-Download grpcio-1.51.1-cp39-cp39-macosx_11_0_arm64.whl from the releases, and run pip install grpcio-1.51.1-cp39-cp39-macosx_11_0_arm64.whl
-
-## Environment
-
-### MinAtar/Breakout
-
-- The player controls a bar that can move horizontally, and gets rewards by bouncing a ball into bricks.
-
-```python
-# action = int in [0, 6)
-# state  = (10, 10, 4) boolean array
-# reward = 1 when agent breaks a brick, 0 every other step
-```
-
-## Training
-
-Once done with implementing `q4_linear_torch.py` and `q5_nature_torch` make sure you test your implementation by launching `python q4_linear_torch.py` and `python q5_nature_torch.py` that will run your code on the Test environment.
-
-You can launch the training of DQN on breakout with
-
-```
-python q6_train_atari_nature.py
-```
-
-
-Training tips: 
-(1) The starter code writes summaries of a bunch of useful variables that can help you monitor the training process.
-You can monitor your training with Tensorboard by doing, on Azure
-
-```
-tensorboard --logdir=results
-```
-
-and then connect to `ip-of-you-machine:6006`
-
-
-(2) You can use ‘screen’ to manage windows on VM and to retrieve running programs. 
-Before training DQN on Atari games, run 
-
-```
-screen 
-```
-then run 
-
-```
-python q6_train_atari_nature.py
-```
-By using Screen, programs continue to run when their window is currently not visible and even when the whole screen session is detached 
-from the users terminal. 
-
-To detach from your window, simply press the following sequence of buttons
-
-```
-ctrl-a d
-```
-This is done by pressing control-a first, releasing it, and press d
-
-
-To retrieve your running program on VM, simply type
-
-```
-screen -r
-```
-which will recover the detached window.   
-
-
-
-**Credits**
-Assignment code written by Guillaume Genthial and Shuhui Qu.
-Assignment code updated by Jian Vora and Max Sobol Mark
+## Experiment and results
+### Linear approaxiamtion
+The $Q$ values is represented as a parametric function $Q_w(s, a)$ where $w$ is the weights and biases of a linear function. The code parts are q4_linear_torch.py and q6_train_atari_linear.py.
+### Neural network approaximation, DeepMind's DQN
+The $Q$ values is represented as a parametric function $Q_w(s, a)$ where $w$ is the weights and biases of smaller version of the deep Q-network, listed as following. 
+* One convolution layer with 16 output channels, a kernel size of 3, stride 1, and no padding. 
+* A ReLU activation.
+* A dense layer with 128 hidden units.
+* Another ReLU activation.
+* The final output layer.
+The code parts are q5_nature_torch.py and q6_train_atari_nature.py.
+### Results
