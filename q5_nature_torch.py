@@ -8,7 +8,7 @@ from q3_schedule import LinearExploration, LinearSchedule
 from q4_linear_torch import Linear
 import logging
 
-
+from copy import deepcopy
 from configs.q5_nature import config
 
 
@@ -48,7 +48,21 @@ class NatureQN(Linear):
 
         ##############################################################
         ################ YOUR CODE HERE - 20-30 lines ################
-
+        in_ch = n_channels * self.config.state_history
+        self.q_network = nn.Sequential(
+            nn.Conv2d(in_channels=in_ch, out_channels=32, kernel_size=8, stride=4,
+                      padding=(3 * img_height - 4 + 8) // 2),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2, padding=(1 * img_height - 2 + 4) // 2),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=(0 * img_height - 1 + 3) // 2),
+            nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(in_features=img_height * img_width * 64, out_features=512),
+            nn.ReLU(),
+            nn.Linear(in_features=512, out_features=num_actions)
+        )
+        self.target_network = deepcopy(self.q_network)
         ##############################################################
         ######################## END YOUR CODE #######################
 
@@ -73,7 +87,8 @@ class NatureQN(Linear):
 
         ##############################################################
         ################ YOUR CODE HERE - 4-5 lines lines ################
-
+        state = state.permute(0, 3, 1, 2)
+        out = self.q_network(state) if network == 'q_network' else self.target_network(state)
         ##############################################################
         ######################## END YOUR CODE #######################
         return out
