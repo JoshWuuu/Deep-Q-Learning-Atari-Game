@@ -20,3 +20,6 @@ The result of linear approaximation, code: q6_train_atari_linear.py \
 The result of neural network approaximation, code: q6_train_atari_nature.py \
 ![plot](results/q6_train_atari_nature/scores.png) \
 As the result shows, the value of the neural network approaximation is higher than the value of the linear approaximation, but the std of neural network approaximation is also higher than the std of the linear approaximation, showing some unstable properties of neural network approaximation.
+### Future direction
+* Test different hyperparameters for the training
+* Implement different model structure for neural network approaximation
