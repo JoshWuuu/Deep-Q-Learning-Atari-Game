@@ -15,3 +15,5 @@ The $Q$ values is represented as a parametric function $Q_w(s, a)$ where $w$ is 
 * The final output layer.
 The code parts are q5_nature_torch.py and q6_train_atari_nature.py.
 ### Results
+![plot](results/q6_train_atari_linear/scores.png)
+![plot](results/q6_train_atari_nature/scores.png)
